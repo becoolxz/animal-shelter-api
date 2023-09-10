@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CityModule } from './city/city.module';
 import { UsersModule } from './user/user.module';
 import { DogsModule } from './dogs/dogs.module';
@@ -18,7 +16,5 @@ import generalConfiguration from './common/config/general-configuration';
     ConfigModule.forRoot({ load: [generalConfiguration] }),
     AnimalSheltersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
