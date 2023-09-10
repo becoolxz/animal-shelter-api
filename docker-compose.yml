@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password_secret
+      - POSTGRES_USERNAME_FILE=/run/secrets/postgres_username_secret
+      - POSTGRES_DB=doggy_dev
+    secrets:
+      - postgres_password_secret
+      - postgres_username_secret
+    container_name: animal-shelters-postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - app-network 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: animal-shelters-api
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    networks:
+      - app-network
+    #entrypoint: sh -c "ls -l /usr/src/app"
+networks:
+  app-network:  # Define the network
+    driver: bridge  # You can use other network drivers depending on your requirements
+secrets:
+  postgres_password_secret:
+    file: ./secrets/postgres/postgres_password_secret_dev.txt
+  postgres_username_secret:
+    file: ./secrets/postgres/postgres_username_secret_dev.txt
