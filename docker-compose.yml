@@ -20,11 +20,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: animal-shelters-api
+    container_name: animal-shelters-api-development
     env_file:
       - .env
     environment:
       PORT: ${PORT}
+      NODE_ENV: development
     ports:
       - '3000:3000'
     depends_on:
