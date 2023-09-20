@@ -1,3 +1,6 @@
+# Custom
+configuration/certificates
+
 # Logs
 logs
 *.log

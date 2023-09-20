@@ -23,6 +23,11 @@ export class DogsController {
     this.logger = new LoggerService(DogsController.name);
   }
 
+  @Get('/hello')
+  hello() {
+    return 'Hello world';
+  }
+
   @Post()
   create(@Body() createDogDto: CreateDogDto) {
     this.logger.log('[create] - Creating new dog...');
@@ -31,15 +36,9 @@ export class DogsController {
 
   @Get()
   findAll(
-    @Query(
-      'page',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
+    @Query('page')
     page: number = 1,
-    @Query(
-      'limit',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
+    @Query('limit')
     limit: number = 10,
     @Query('order')
     order: string = 'id',
