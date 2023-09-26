@@ -25,7 +25,7 @@ export class DogsController {
 
   @Get('/hello')
   hello() {
-    return 'Hello world';
+    return 'Hello world ECS actions';
   }
 
   @Post()
