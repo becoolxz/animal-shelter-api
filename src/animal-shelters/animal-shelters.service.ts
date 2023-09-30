@@ -33,13 +33,13 @@ export class AnimalSheltersService {
   }
 
   async update(id: number, updateAnimalShelterDto: UpdateAnimalShelterDto) {
-    const updateDog = new AnimalShelter({
+    const updateAnimalShelter = new AnimalShelter({
       name: updateAnimalShelterDto.name,
       address: updateAnimalShelterDto.address,
     });
 
     const [affectedCount] = await this.animalSheltersRepository.update(
-      { updateDog },
+      { updateAnimalShelter },
       { where: { id } },
     );
 

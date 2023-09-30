@@ -1,12 +1,11 @@
-import { AnimalShelter } from '../../animal-shelters/entities/animal-shelter.entity';
 import {
   BelongsTo,
   Column,
   ForeignKey,
-  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { AnimalShelter } from '../../animal-shelters/entities/animal-shelter.entity';
 
 @Table
 export class Dog extends Model {
@@ -22,8 +21,8 @@ export class Dog extends Model {
   @Column
   weight: number;
 
-  @ForeignKey(() => AnimalShelter)
   @Column
+  @ForeignKey(() => AnimalShelter)
   animalShelterId: number;
 
   @BelongsTo(() => AnimalShelter)
