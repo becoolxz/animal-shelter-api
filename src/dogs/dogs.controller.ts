@@ -23,11 +23,6 @@ export class DogsController {
     this.logger = new LoggerService(DogsController.name);
   }
 
-  @Get('/hello')
-  hello() {
-    return 'Hello world ECS actions';
-  }
-
   @Post()
   create(@Body() createDogDto: CreateDogDto) {
     this.logger.log('[create] - Creating new dog...');

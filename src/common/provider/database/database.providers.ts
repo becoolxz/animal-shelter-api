@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize-typescript';
-import { User } from '../../../user/entities/user.entity';
 import { Dog } from '../../../dogs/entities/dog.entity';
 import { AnimalShelter } from '../../../animal-shelters/entities/animal-shelter.entity';
 import configuration from '../../config/general-configuration';
@@ -34,9 +33,7 @@ export const databaseProviders = [
         dialectOptions: sequelizeOpt(),
       });
 
-      sequelize.addModels([User, AnimalShelter, Dog]);
-
-      //await sequelize.sync();
+      sequelize.addModels([AnimalShelter, Dog]);
 
       return sequelize;
     },
