@@ -54,28 +54,22 @@ export class DogsController {
     return this.dogsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch(':uuid')
   update(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
+    @Param('uuid')
+    uuid: string,
     @Body() updateDogDto: UpdateDogDto,
   ) {
-    this.logger.log(`[update] - Updating dog ID: ${id}...`);
-    return this.dogsService.update(+id, updateDogDto);
+    this.logger.log(`[update] - Updating dog UUID: ${uuid}...`);
+    return this.dogsService.update(uuid, updateDogDto);
   }
 
-  @Delete(':id')
+  @Delete(':uuid')
   remove(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
+    @Param('uuid')
+    uuid: string,
   ) {
-    this.logger.log(`[remove] - Removing dog ID: ${id}...`);
-    return this.dogsService.remove(+id);
+    this.logger.log(`[remove] - Removing dog UUID: ${uuid}...`);
+    return this.dogsService.remove(uuid);
   }
 }

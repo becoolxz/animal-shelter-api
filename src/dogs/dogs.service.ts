@@ -8,6 +8,13 @@ import { AnimalSheltersService } from '../animal-shelters/animal-shelters.servic
 import { LoggerService } from '../common/logger/winston_logger.logger';
 import { CustomListPaginatedResponse } from '../common/dto/custom-list-paginated-response';
 
+class DogUpdateException extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DogUpdateException';
+  }
+}
+
 @Injectable()
 export class DogsService {
   private readonly logger: LoggerService;
@@ -24,7 +31,7 @@ export class DogsService {
     this.logger = new LoggerService(DogsService.name);
   }
 
-  async create(createDogDto: CreateDogDto) {
+  async create(createDogDto: CreateDogDto): Promise<ResponseDogDto> {
     const transaction = await this.sequelize.transaction();
     try {
       const foundAnimalShelter = await this.animalShelterService.findOne(
@@ -61,11 +68,13 @@ export class DogsService {
       this.logger.log(`Dog created: ${JSON.stringify(dogCreated, null, 2)}`);
 
       return new ResponseDogDto(
-        dogCreated.id,
+        //dogCreated.id,
+        dogCreated.uuid,
         dogCreated.name,
         dogCreated.age,
         dogCreated.breed,
         dogCreated.weight,
+        dogCreated.animalShelterId,
       );
     } catch (error) {
       this.logger.warn(
@@ -80,7 +89,11 @@ export class DogsService {
     }
   }
 
-  async findAll(page, limit, order): Promise<CustomListPaginatedResponse<Dog>> {
+  async findAll(
+    page: number,
+    limit: number,
+    order: string,
+  ): Promise<CustomListPaginatedResponse<ResponseDogDto>> {
     const offset = (page - 1) * limit;
     const dogList = await this.dogsRepository.findAll({
       limit,
@@ -92,11 +105,17 @@ export class DogsService {
     const itemsPerPage = limit;
     const numPages = count / limit;
 
-    const response = new CustomListPaginatedResponse<Dog>(
+    const responseDogDto: ResponseDogDto[] = [];
+
+    dogList.forEach((dog) => {
+      responseDogDto.push(ResponseDogDto.convertDogToDto(dog));
+    });
+
+    const response = new CustomListPaginatedResponse<ResponseDogDto>(
       count,
       itemsPerPage,
       numPages,
-      dogList,
+      responseDogDto,
     );
 
     return response;
@@ -122,25 +141,45 @@ export class DogsService {
     return foundDog;
   }
 
-  async update(id: number, updateDogDto: UpdateDogDto) {
+  async update(
+    uuid: string,
+    updateDogDto: UpdateDogDto,
+  ): Promise<ResponseDogDto> {
     this.logger.log(`UpdateDog data: ${JSON.stringify(updateDogDto, null, 2)}`);
 
     try {
       const [affectedCount] = await this.dogsRepository.update(updateDogDto, {
-        where: { id },
+        where: { uuid },
       });
 
       this.logger.log(`Is dog updated? - affectedCount: ${affectedCount}`);
 
-      return affectedCount > 0; // Directly return the boolean condition
+      const isUpdated = affectedCount > 0;
+
+      if (isUpdated) {
+        return new ResponseDogDto(
+          uuid,
+          updateDogDto.name,
+          updateDogDto.age,
+          updateDogDto.breed,
+          updateDogDto.weight,
+          updateDogDto.animalShelterId,
+        );
+      } else {
+        throw new DogUpdateException(
+          `Dog with ID ${uuid} not found or not updated.`,
+        );
+      }
     } catch (error) {
-      this.logger.error(`Error updating dog with ID ${id}`, error);
+      this.logger.error(`Error updating dog with ID ${uuid}`, error);
       throw error; // Rethrow the error for further handling
     }
   }
 
-  async remove(id: number) {
-    const affectedCount = await this.dogsRepository.destroy({ where: { id } });
+  async remove(uuid: string) {
+    const affectedCount = await this.dogsRepository.destroy({
+      where: { uuid },
+    });
     return affectedCount > 0 ? true : false;
   }
 }

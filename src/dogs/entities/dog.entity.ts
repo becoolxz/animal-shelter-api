@@ -10,6 +10,9 @@ import { AnimalShelter } from '../../animal-shelters/entities/animal-shelter.ent
 @Table
 export class Dog extends Model {
   @Column
+  uuid: string;
+
+  @Column
   name: string;
 
   @Column
