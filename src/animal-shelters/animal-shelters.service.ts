@@ -3,6 +3,7 @@ import { CreateAnimalShelterDto } from './dto/create-animal-shelter.dto';
 import { UpdateAnimalShelterDto } from './dto/update-animal-shelter.dto';
 import { AnimalShelter } from './entities/animal-shelter.entity';
 import { ResponseAnimalShelterDto } from './dto/response-animal-shelter.dto';
+import { CustomListPaginatedResponse } from '../common/dto/custom-list-paginated-response';
 
 @Injectable()
 export class AnimalSheltersService {
@@ -24,8 +25,26 @@ export class AnimalSheltersService {
     );
   }
 
-  findAll() {
-    return this.animalSheltersRepository.findAll();
+  async findAll(page: number, limit: number, order: string) {
+    const offset = (page - 1) * limit;
+    const animalShelterList = await this.animalSheltersRepository.findAll({
+      limit,
+      offset,
+      order: [[order, 'ASC']],
+    });
+
+    const count = await this.animalSheltersRepository.count();
+    const itemsPerPage = limit;
+    const numPages = count / limit;
+
+    const response = new CustomListPaginatedResponse<AnimalShelter>(
+      count,
+      itemsPerPage,
+      numPages,
+      animalShelterList,
+    );
+
+    return response;
   }
 
   findOne(id: number) {
