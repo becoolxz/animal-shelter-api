@@ -57,8 +57,5 @@ FROM node:18-alpine AS production
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-# Copy the PEM file into the production image
-COPY --chown=node:node configurations/certificates/us-east-1-bundle.pem /usr/src/app/us-east-1-bundle.pem
-
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]

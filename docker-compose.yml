@@ -16,15 +16,16 @@ services:
       - '5432:5432'
     networks:
       - app-network 
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: animal-shelters-api-development
+    container_name: animal-shelters-api
     env_file:
       - .env
     environment:
       PORT: ${PORT}
+      DATABASE_HOST: db
       NODE_ENV: development
     ports:
       - '3000:3000'
@@ -32,10 +33,9 @@ services:
       - db
     networks:
       - app-network
-    #entrypoint: sh -c "ls -l /usr/src/app"
 networks:
-  app-network:  # Define the network
-    driver: bridge  # You can use other network drivers depending on your requirements
+  app-network:
+    driver: bridge
 secrets:
   postgres_password_secret:
     file: ./secrets/postgres/postgres_password_secret_dev.txt
