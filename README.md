@@ -16,6 +16,15 @@ dog:
  - update
  - delete
 
+## Technologies
+
+ - Typescript
+ - Postgres
+ - Sequelize
+ - Nest.js
+ - Jest
+ - Docker
+
 ## Highlights
 
 There are some techniques added in this project to make the api more professional and similar to a production api, they are:
